@@ -1,2 +1,2 @@
-# pie
-Python CLIs
+# eatpy
+Python template generator
