@@ -18,11 +18,11 @@ from ..templates.package import (
 
 
 @click.group()
-def pie():
+def eatpy():
     pass
 
 
-@pie.command()
+@eatpy.command()
 @click.argument("root")
 def init(root):
 
