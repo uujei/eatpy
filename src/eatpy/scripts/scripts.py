@@ -52,7 +52,7 @@ def init(root):
             "message": "Select Options",
             "choices": [
                 {"name": ".gitignore", "checked": True},
-                {"name": ".vscode/setting.json", "checked": True},
+                {"name": ".vscode/settings.json", "checked": True},
                 {"name": "<module>/__init__.py", "checked": True},
             ],
         },
