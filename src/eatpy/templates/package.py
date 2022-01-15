@@ -81,10 +81,7 @@ console_scripts =
 ################################################################
 # pyproject.toml
 ################################################################
-def _generate_pyproject_toml(root):
-    FILE = "pyproject.toml"
-
-    content = f"""\
+PYPROJECT_TOML = """\
 [build-system]
 requires = [ "setuptools>=41", "wheel", "setuptools-git-versioning" ]
 build-backend = "setuptools.build_meta"
@@ -94,6 +91,10 @@ enabled = true
 template = "{{tag}}"
 """
 
+
+def _generate_pyproject_toml(root):
+    FILE = "pyproject.toml"
+    content = PYPROJECT_TOML
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
 
@@ -101,19 +102,21 @@ template = "{{tag}}"
 ################################################################
 # .vscode/setting.json
 ################################################################
+SETTINGS_JSON = {
+    "editor.formatOnSave": True,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "119"],
+    "python.linting.enabled": True,
+    "python.linting.flake8Enabled": True,
+    "python.linting.flake8Args": ["--ignore=E302,E501,F401,F841", "--verbose"],
+    "autoDocstring.generateDocstringOnEnter": True,
+    "autoDocstring.docstringFormat": "sphinx",
+}
+
+
 def _generate_vscode_settings(root):
     FILE = ".vscode/settings.json"
-
-    content = {
-        "python.formatting.provider": "black",
-        "python.formatting.blackArgs": ["--line-length", "119"],
-        "python.linting.flake8Enabled": True,
-        "python.linting.enabled": True,
-        "editor.formatOnSave": True,
-        "autoDocstring.generateDocstringOnEnter": True,
-        "autoDocstring.docstringFormat": "sphinx",
-    }
-
+    content = SETTINGS_JSON
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
 
@@ -121,10 +124,7 @@ def _generate_vscode_settings(root):
 ################################################################
 # .gitignore
 ################################################################
-def _generate_gitignore(root):
-    FILE = ".gitignore"
-
-    content = """\
+GITIGNORE = """\
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -232,5 +232,9 @@ venv.bak/
 .pyre/
 """
 
+
+def _generate_gitignore(root):
+    FILE = ".gitignore"
+    content = GITIGNORE
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
