@@ -88,7 +88,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools-git-versioning]
 enabled = true
-template = "{{tag}}"
+template = "{tag}"
 """
 
 
