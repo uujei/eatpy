@@ -110,7 +110,7 @@ SETTINGS_JSON = {
     "python.linting.flake8Enabled": True,
     "python.linting.flake8Args": ["--ignore=E302,E501,F401,F841", "--verbose"],
     "autoDocstring.generateDocstringOnEnter": True,
-    "autoDocstring.docstringFormat": "sphinx",
+    "autoDocstring.docstringFormat": "google",
 }
 
 
