@@ -1,54 +1,90 @@
 import json
 import os
 
+from rich.console import Console
+from rich.panel import Panel
+
+from common import _generate_gitignore, _generate_vscode_settings, _list_to_cfg_format, _makedir_and_write
+
+console = Console(width=88)
 
 ################################################################
-# Helpers
+# init package
 ################################################################
-# make dir if not exist and write file
-def _makedir_and_write(fp, content, mode="w"):
-    # make directory
-    _dir = fp.rsplit("/", 1)[0]
-    os.makedirs(_dir, exist_ok=True)
+def init_package(root):
+    from PyInquirer import print_json, prompt
 
-    # write file
-    _ext = fp.rsplit(".", 1)[-1]
-    with open(fp, mode) as f:
-        if _ext.lower() in ["json"]:
-            json.dump(content, f)
-        else:
-            f.write(content)
+    root = os.path.abspath(root)
+    project = root.rsplit("/", 1)[-1]
 
+    q_setup_cfg = [
+        {"type": "input", "name": "project", "default": project, "message": "Project Name"},
+        {"type": "input", "name": "author", "message": "Author"},
+        {"type": "input", "name": "author_email", "message": "Author Email"},
+        {"type": "input", "name": "description", "message": "Description"},
+        {"type": "input", "name": "long_description", "default": "file: README.md", "message": "Long Description"},
+        {"type": "input", "name": "keywords", "message": "Keywords"},
+        {"type": "input", "name": "license", "default": "MIT License", "message": "License"},
+        {"type": "input", "name": "python_requires", "default": ">= 3.8", "message": "Python Requires"},
+        {
+            "type": "input",
+            "name": "install_requires",
+            "message": "Install Requires",
+            "filter": lambda x: [_.strip() for _ in x.split(",")],
+        },
+        {
+            "type": "checkbox",
+            "name": "files",
+            "message": "Select Options",
+            "choices": [
+                {"name": ".gitignore", "checked": True},
+                {"name": ".vscode/settings.json", "checked": True},
+                {"name": "<module>/__init__.py", "checked": True},
+            ],
+        },
+        {"type": "confirm", "name": "confirm", "message": "Confirm Initializer"},
+    ]
+    conf = prompt(q_setup_cfg)
+    confirm = conf.pop("confirm")
+    if not confirm:
+        print("[EXIT] Nothing Happened!")
+        return
+    files = conf.pop("files")
+    _generate_setup_cfg(root=root, **conf)
+    _generate_pyproject_toml(root=root)
 
-# list of string to setup.cfg format
-def _list_to_cfg_format(x: list):
-    TAB = "    "
-    if x is None:
-        return ""
+    if ".vscode/settings.json" in files:
+        _generate_vscode_settings(root=root)
+    if ".gitignore" in files:
+        _generate_gitignore(root=root)
+    if "<module>/__init__.py" in files:
+        _module_init = os.path.join("src", project.replace("-", "_"), "__init__.py")
+        _module_init_abs = os.path.join(root, _module_init)
+        if not os.path.exists(_module_init_abs):
+            os.makedirs(_module_init_abs.rsplit("/", 1)[0], exist_ok=True)
+            with open(_module_init_abs, "w") as f:
+                f.write(f"# MODULE NAME: {project}")
+                f.write("")
 
-    if "" not in x:
-        x = ["", *x]
-    return f"\n{TAB}".join(x)
+    summary = "\n".join(
+        [
+            f"[bold]Python project '{project}' is ready.[/bold]",
+            " - Build Package: 'python -m build', python package 'build' is required.",
+            " - Upload to PyPI: 'twine upload dist/*', python package 'twine is required.",
+        ]
+    )
+
+    print()
+    console.print(Panel(summary))
 
 
 ################################################################
 # setup.cfg
 ################################################################
-def _generate_setup_cfg(
-    root,
-    project,
-    description,
-    long_description,
-    author,
-    author_email,
-    keywords,
-    license,
-    python_requires,
-    install_requires,
+def GEN_SETUP_CFG(
+    project, description, long_description, author, author_email, keywords, license, python_requires, install_requires
 ):
-    FILE = "setup.cfg"
-
-    content = f"""\
+    return f"""\
 [metadata]
 name = {project}
 description = {description}
@@ -74,6 +110,10 @@ console_scripts =
     # <cli command> = <module>.<submodule>:<function>
 """
 
+
+def _generate_setup_cfg(root, **kwargs):
+    FILE = "setup.cfg"
+    content = GEN_SETUP_CFG(**kwargs)
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
 
@@ -95,146 +135,5 @@ template = "{tag}"
 def _generate_pyproject_toml(root):
     FILE = "pyproject.toml"
     content = PYPROJECT_TOML
-    fp = os.path.join(root, FILE)
-    _makedir_and_write(fp, content)
-
-
-################################################################
-# .vscode/setting.json
-################################################################
-SETTINGS_JSON = {
-    "editor.formatOnSave": True,
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": ["--line-length", "119"],
-    "python.linting.enabled": True,
-    "python.linting.flake8Enabled": True,
-    "python.linting.flake8Args": ["--ignore=E302,E501,F401,F841", "--verbose"],
-    "autoDocstring.generateDocstringOnEnter": True,
-    "autoDocstring.docstringFormat": "google",
-}
-
-
-def _generate_vscode_settings(root):
-    FILE = ".vscode/settings.json"
-    content = SETTINGS_JSON
-    fp = os.path.join(root, FILE)
-    _makedir_and_write(fp, content)
-
-
-################################################################
-# .gitignore
-################################################################
-GITIGNORE = """\
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# IPython and Jupyter Notebook
-profile_default/
-ipython_config.py
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
-__pypackages__/
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# Pyre type checker
-.pyre/
-"""
-
-
-def _generate_gitignore(root):
-    FILE = ".gitignore"
-    content = GITIGNORE
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
