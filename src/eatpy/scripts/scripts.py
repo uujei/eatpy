@@ -6,6 +6,7 @@ from gettext import install
 import click
 
 from ..templates.package import init_package
+from ..templates.aws_lambda import init_lambda
 
 
 ################################################################
@@ -25,3 +26,9 @@ def init():
 @click.argument("root")
 def package(root):
     init_package(root)
+
+
+@init.command()
+@click.argument("root")
+def aws_lambda(root):
+    init_lambda(root)

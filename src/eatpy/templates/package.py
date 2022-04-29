@@ -4,7 +4,8 @@ import os
 from rich.console import Console
 from rich.panel import Panel
 
-from common import _generate_gitignore, _generate_vscode_settings, _list_to_cfg_format, _makedir_and_write
+from ..default_files import PYPROJECT_TOML
+from .common import _generate_gitignore, _generate_vscode_settings, _list_to_cfg_format, _makedir_and_write
 
 console = Console(width=88)
 
@@ -121,17 +122,6 @@ def _generate_setup_cfg(root, **kwargs):
 ################################################################
 # pyproject.toml
 ################################################################
-PYPROJECT_TOML = """\
-[build-system]
-requires = [ "setuptools>=41", "wheel", "setuptools-git-versioning" ]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools-git-versioning]
-enabled = true
-template = "{tag}"
-"""
-
-
 def _generate_pyproject_toml(root):
     FILE = "pyproject.toml"
     content = PYPROJECT_TOML
