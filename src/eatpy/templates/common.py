@@ -23,14 +23,15 @@ def _makedir_and_write(fp, content, mode="w"):
 
 
 # list of string to setup.cfg format
-def _list_to_cfg_format(x: list):
+def _list_to_cfg_format(install_requires: list):
     TAB = "    "
-    if x is None:
+    if install_requires is None:
         return ""
 
-    if "" not in x:
-        x = ["", *x]
-    return f"\n{TAB}".join(x)
+    if "" not in install_requires:
+        install_requires = ["", *install_requires]
+
+    return f"\n{TAB}".join(install_requires)
 
 
 ################################################################

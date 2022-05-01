@@ -7,7 +7,7 @@ import click
 
 from ..templates.package import init_package
 from ..templates.aws_lambda import init_lambda
-
+from ..templates.settings import init_settings
 
 ################################################################
 # CLIs
@@ -32,3 +32,9 @@ def package(root):
 @click.argument("root")
 def aws_lambda(root):
     init_lambda(root)
+
+
+@init.command()
+@click.argument("root")
+def settings(root):
+    init_settings(root)

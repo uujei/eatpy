@@ -1,10 +1,9 @@
-import json
 import os
 
 from rich.console import Console
 from rich.panel import Panel
 
-from ..default_files import PYPROJECT_TOML
+from ..default_files import PYPROJECT_TOML, SETUP_CFG
 from .common import _generate_gitignore, _generate_vscode_settings, _list_to_cfg_format, _makedir_and_write
 
 console = Console(width=88)
@@ -13,7 +12,7 @@ console = Console(width=88)
 # init package
 ################################################################
 def init_package(root):
-    from PyInquirer import print_json, prompt
+    from PyInquirer import prompt
 
     root = os.path.abspath(root)
     project = root.rsplit("/", 1)[-1]
@@ -32,6 +31,12 @@ def init_package(root):
             "name": "install_requires",
             "message": "Install Requires",
             "filter": lambda x: [_.strip() for _ in x.split(",")],
+        },
+        {
+            "type": "input",
+            "name": "private_pypi",
+            "default": "http://pypi.ml.xscope.ai/simple",
+            "message": "Your Private PyPI",
         },
         {
             "type": "checkbox",
@@ -82,39 +87,23 @@ def init_package(root):
 ################################################################
 # setup.cfg
 ################################################################
-def GEN_SETUP_CFG(
-    project, description, long_description, author, author_email, keywords, license, python_requires, install_requires
-):
-    return f"""\
-[metadata]
-name = {project}
-description = {description}
-long_description = {long_description}
-author = {author}
-author_email = {author_email}
-keywords = {keywords}
-license = {license}
-
-[options]
-python_requires = {python_requires}
-package_dir=
-    =src
-packages = find:
-install_requires = {_list_to_cfg_format(install_requires)}
-include_package_data = True
-
-[options.packages.find]
-where = src
-
-[options.entry_points]
-console_scripts =
-    # <cli command> = <module>.<submodule>:<function>
-"""
-
-
 def _generate_setup_cfg(root, **kwargs):
     FILE = "setup.cfg"
-    content = GEN_SETUP_CFG(**kwargs)
+    install_requires = _list_to_cfg_format(install_requires=kwargs.get("install_requires"))
+    dependency_links = kwargs.get("private_pypi")
+    content = (
+        SETUP_CFG.replace("{PROJECT}", kwargs.get("project"))
+        .replace("{DESCRIPTION}", kwargs.get("description"))
+        .replace("{LONG_DESCRIPTION}", kwargs.get("long_description"))
+        .replace("{AUTHOR}", kwargs.get("author"))
+        .replace("{AUTHOR_EMAIL}", kwargs.get("author_email"))
+        .replace("{KEYWORDS}", kwargs.get("keywords"))
+        .replace("{LICENSE}", kwargs.get("license"))
+        .replace("{DEPENDENCY_LINKS}", kwargs.get("private_pypi"))
+        .replace("dependency_links = {DEPENDENCY_LINKS}\n", "")
+        .replace("{PYTHON_REQUIRES}", kwargs.get("python_requires"))
+        .replace("{INSTALL_REQUIRES}", install_requires)
+    )
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)
 

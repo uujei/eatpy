@@ -3,8 +3,8 @@ DOCKERFILE = """\
 FROM public.ecr.aws/lambda/python:{PYTHON_VERSION}
 MAINTAINER {MAINTAINER} <{MAINTAINER_EMAIL}>
 
-# envs
-ENV LAMBDA_TASK_ROOT=/var/run
+# set localtime
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # app 폴더에 있는 코드를 이미지로 복사합니다.
 COPY ./{APP_DIR}/ ${LAMBDA_TASK_ROOT}/

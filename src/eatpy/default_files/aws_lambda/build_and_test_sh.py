@@ -10,10 +10,10 @@ CONTAINER_NAME=$DEV_IMAGE
 read LOWER_PORT UPPER_PORT < /proc/sys/net/ipv4/ip_local_port_range
 while :
 do
-        PORT="`shuf -i ${LOWER_PORT}-${UPPER_PORT} -n 1`"
-        ss -lpn | grep -q ":$PORT " || break
+        TEST_PORT="`shuf -i ${LOWER_PORT}-${UPPER_PORT} -n 1`"
+        ss -lpn | grep -q ":$TEST_PORT " || break
 done
-echo $PORT
+echo $TEST_PORT
 
 # build
 echo build '${DEV_IMAGE}'...
