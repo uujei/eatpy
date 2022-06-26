@@ -4,7 +4,7 @@ name = {PROJECT}
 description = {DESCRIPTION}
 long_description = {LONG_DESCRIPTION}
 author = {AUTHOR}
-author_email = {AUTHOR}
+author_email = {AUTHOR_EMAIL}
 keywords = {KEYWORDS}
 license = {LICENSE}
 
