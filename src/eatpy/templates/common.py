@@ -1,7 +1,7 @@
 import json
 import os
 
-from ..default_files import GITIGNORE, SETTINGS_JSON
+from ..default_files import GITIGNORE, SETTINGS_JSON, DOCKERIGNORE
 
 
 ################################################################
@@ -50,5 +50,15 @@ def _generate_vscode_settings(root):
 def _generate_gitignore(root):
     FILE = ".gitignore"
     content = GITIGNORE
+    fp = os.path.join(root, FILE)
+    _makedir_and_write(fp, content)
+
+
+################################################################
+# .dockerignore
+################################################################
+def _generate_dockerignore(root):
+    FILE = ".dockerignore"
+    content = DOCKERIGNORE
     fp = os.path.join(root, FILE)
     _makedir_and_write(fp, content)

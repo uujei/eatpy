@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from ..default_files import APP_PY, BUILD_AND_TEST_SH, DOCKERFILE, ENVIRONMENT_YML, DOCKERFILE_CONDA, TASK_PY
-from .common import _generate_gitignore, _generate_vscode_settings, _makedir_and_write
+from .common import _generate_gitignore, _generate_vscode_settings, _makedir_and_write, _generate_dockerignore
 
 console = Console(width=88)
 
@@ -51,6 +51,7 @@ def init_lambda(root):
             "message": "Select Options",
             "choices": [
                 {"name": ".gitignore", "checked": True},
+                {"name": ".dockerignore", "checked": True},
                 {"name": ".vscode/settings.json", "checked": True},
             ],
         },
@@ -68,6 +69,8 @@ def init_lambda(root):
         _generate_vscode_settings(root=root)
     if ".gitignore" in files:
         _generate_gitignore(root=root)
+    if ".dockerignore" in files:
+        _generate_dockerignore(root=root)
 
     # write
     if conf.get("use_conda", False):

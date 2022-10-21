@@ -4,7 +4,13 @@ from rich.console import Console
 from rich.panel import Panel
 
 from ..default_files import PYPROJECT_TOML, SETUP_CFG
-from .common import _generate_gitignore, _generate_vscode_settings, _list_to_cfg_format, _makedir_and_write
+from .common import (
+    _generate_gitignore,
+    _generate_vscode_settings,
+    _list_to_cfg_format,
+    _makedir_and_write,
+    _generate_dockerignore,
+)
 
 console = Console(width=88)
 
@@ -44,6 +50,7 @@ def init_package(root):
             "message": "Select Options",
             "choices": [
                 {"name": ".gitignore", "checked": True},
+                {"name": ".dockerignore", "checked": True},
                 {"name": ".vscode/settings.json", "checked": True},
                 {"name": "<module>/__init__.py", "checked": True},
             ],
@@ -63,6 +70,8 @@ def init_package(root):
         _generate_vscode_settings(root=root)
     if ".gitignore" in files:
         _generate_gitignore(root=root)
+    if ".dockerignore" in files:
+        _generate_dockerignore(root=root)
     if "<module>/__init__.py" in files:
         _module_init = os.path.join("src", project.replace("-", "_"), "__init__.py")
         _module_init_abs = os.path.join(root, _module_init)

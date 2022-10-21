@@ -1,3 +1,4 @@
+from ._dockerignore import DOCKERIGNORE
 from ._gitignore import GITIGNORE
 from .aws_lambda.app_py import APP_PY
 from .aws_lambda.build_and_test_sh import BUILD_AND_TEST_SH
