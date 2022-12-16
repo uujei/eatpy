@@ -10,13 +10,18 @@ from ..templates.aws_lambda import init_lambda
 from ..templates.settings import init_settings
 
 ################################################################
-# CLIs
+# eatpy
 ################################################################
+
+
 @click.group()
 def eatpy():
     pass
 
 
+################################################################
+# init
+################################################################
 @eatpy.group()
 def init():
     pass
@@ -38,3 +43,22 @@ def aws_lambda(root):
 @click.argument("root")
 def settings(root):
     init_settings(root)
+
+################################################################
+# dotenv
+################################################################
+
+
+@eatpy.group()
+def dotenv():
+    pass
+
+
+@dotenv.command()
+def status():
+    pass
+
+
+@dotenv.command()
+def push():
+    pass
