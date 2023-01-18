@@ -5,14 +5,16 @@ from rich.panel import Panel
 
 from ..default_files import PYPROJECT_TOML, SETUP_CFG
 from .common import (
+    _generate_dockerignore,
+    _generate_gitattributes,
     _generate_gitignore,
     _generate_vscode_settings,
     _list_to_cfg_format,
     _makedir_and_write,
-    _generate_dockerignore,
 )
 
 console = Console(width=88)
+
 
 ################################################################
 # init package
@@ -24,14 +26,18 @@ def init_package(root):
     project = root.rsplit("/", 1)[-1]
 
     q_setup_cfg = [
-        {"type": "input", "name": "project", "default": project, "message": "Project Name"},
+        {"type": "input", "name": "project",
+            "default": project, "message": "Project Name"},
         {"type": "input", "name": "author", "message": "Author"},
         {"type": "input", "name": "author_email", "message": "Author Email"},
         {"type": "input", "name": "description", "message": "Description"},
-        {"type": "input", "name": "long_description", "default": "file: README.md", "message": "Long Description"},
+        {"type": "input", "name": "long_description",
+            "default": "file: README.md", "message": "Long Description"},
         {"type": "input", "name": "keywords", "message": "Keywords"},
-        {"type": "input", "name": "license", "default": "MIT License", "message": "License"},
-        {"type": "input", "name": "python_requires", "default": ">= 3.8", "message": "Python Requires"},
+        {"type": "input", "name": "license",
+            "default": "MIT License", "message": "License"},
+        {"type": "input", "name": "python_requires",
+            "default": ">= 3.8", "message": "Python Requires"},
         {
             "type": "input",
             "name": "install_requires",
@@ -41,7 +47,7 @@ def init_package(root):
         {
             "type": "input",
             "name": "private_pypi",
-            "default": "http://pypi.ml.xscope.ai/simple",
+            "default": os.getenv("PIP_EXTRA_INDEX_URL") or "",
             "message": "Your Private PyPI",
         },
         {
@@ -73,14 +79,16 @@ def init_package(root):
     if ".dockerignore" in files:
         _generate_dockerignore(root=root)
     if "<module>/__init__.py" in files:
-        _module_init = os.path.join("src", project.replace("-", "_"), "__init__.py")
+        _module_init = os.path.join(
+            "src", project.replace("-", "_"), "__init__.py")
         _module_init_abs = os.path.join(root, _module_init)
         if not os.path.exists(_module_init_abs):
             os.makedirs(_module_init_abs.rsplit("/", 1)[0], exist_ok=True)
             with open(_module_init_abs, "w") as f:
                 f.write(f"# MODULE NAME: {project}")
                 f.write("")
-
+    _generate_gitattributes(root=root)
+        
     summary = "\n".join(
         [
             f"[bold]Python project '{project}' is ready.[/bold]",
@@ -98,8 +106,9 @@ def init_package(root):
 ################################################################
 def _generate_setup_cfg(root, **kwargs):
     FILE = "setup.cfg"
-    install_requires = _list_to_cfg_format(install_requires=kwargs.get("install_requires"))
-    dependency_links = kwargs.get("private_pypi")
+    install_requires = _list_to_cfg_format(
+        install_requires=kwargs.get("install_requires"))
+    dependency_links = kwargs.get("private_pypi", "")
     content = (
         SETUP_CFG.replace("{PROJECT}", kwargs.get("project"))
         .replace("{DESCRIPTION}", kwargs.get("description"))
@@ -108,8 +117,7 @@ def _generate_setup_cfg(root, **kwargs):
         .replace("{AUTHOR_EMAIL}", kwargs.get("author_email"))
         .replace("{KEYWORDS}", kwargs.get("keywords"))
         .replace("{LICENSE}", kwargs.get("license"))
-        .replace("{DEPENDENCY_LINKS}", kwargs.get("private_pypi"))
-        .replace("dependency_links = {DEPENDENCY_LINKS}\n", "")
+        .replace("{DEPENDENCY_LINKS}", dependency_links)
         .replace("{PYTHON_REQUIRES}", kwargs.get("python_requires"))
         .replace("{INSTALL_REQUIRES}", install_requires)
     )

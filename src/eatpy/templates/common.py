@@ -45,6 +45,15 @@ def _generate_vscode_settings(root):
 
 
 ################################################################
+# .gitattribute
+################################################################
+def _generate_gitattributes(root):
+    FILE = ".gitattributes"
+    content = "ENVS  merge=ours"
+    fp = os.path.join(root, FILE)
+    _makedir_and_write(fp, content)
+
+################################################################
 # .gitignore
 ################################################################
 def _generate_gitignore(root):

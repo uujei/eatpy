@@ -4,7 +4,13 @@ from rich.console import Console
 from rich.panel import Panel
 
 from ..default_files import APP_PY, BUILD_AND_TEST_SH, DOCKERFILE, ENVIRONMENT_YML, DOCKERFILE_CONDA, TASK_PY
-from .common import _generate_gitignore, _generate_vscode_settings, _makedir_and_write, _generate_dockerignore
+from .common import (
+    _generate_gitignore,
+    _generate_vscode_settings,
+    _makedir_and_write,
+    _generate_dockerignore,
+    _generate_gitattributes,
+)
 
 console = Console(width=88)
 
@@ -15,6 +21,8 @@ HANDLER = "handler"
 ################################################################
 # init package
 ################################################################
+
+
 def init_lambda(root):
     from PyInquirer import prompt
 
@@ -22,9 +30,12 @@ def init_lambda(root):
     lambda_func = root.rsplit("/", 1)[-1]
 
     questions = [
-        {"type": "input", "name": "lambda_func", "default": lambda_func, "message": "Lambda Function Name"},
-        {"type": "input", "name": "python_version", "default": "3.8", "message": "Python Version"},
-        {"type": "confirm", "name": "use_conda", "message": "Use Conda Environment?"},
+        {"type": "input", "name": "lambda_func",
+            "default": lambda_func, "message": "Lambda Function Name"},
+        {"type": "input", "name": "python_version",
+            "default": "3.8", "message": "Python Version"},
+        {"type": "confirm", "name": "use_conda",
+            "message": "Use Conda Environment?"},
         {"type": "input", "name": "maintainer", "message": "Maintainer"},
         {"type": "input", "name": "maintainer_email", "message": "Maintainer Email"},
         {
@@ -71,6 +82,7 @@ def init_lambda(root):
         _generate_gitignore(root=root)
     if ".dockerignore" in files:
         _generate_dockerignore(root=root)
+    _generate_gitattributes(root=root)
 
     # write
     if conf.get("use_conda", False):
@@ -98,7 +110,8 @@ def init_lambda(root):
 def _generate_environment_yml(root, conf):
     if conf.get("use_conda"):
         FILE = "environment.yml"
-        content = ENVIRONMENT_YML.replace("{PYTHON_VERSION}", conf.get("python_version", "3.8"))
+        content = ENVIRONMENT_YML.replace(
+            "{PYTHON_VERSION}", conf.get("python_version", "3.8"))
         fp = os.path.join(root, FILE)
         _makedir_and_write(fp, content)
 

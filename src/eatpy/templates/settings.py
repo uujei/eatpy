@@ -5,14 +5,15 @@ from rich.panel import Panel
 
 from ..default_files import PYPROJECT_TOML, SETUP_CFG
 from .common import (
+    _generate_dockerignore,
+    _generate_gitattributes,
     _generate_gitignore,
     _generate_vscode_settings,
-    _list_to_cfg_format,
     _makedir_and_write,
-    _generate_dockerignore,
 )
 
 console = Console(width=88)
+
 
 ################################################################
 # init package
@@ -62,7 +63,8 @@ def init_settings(root):
         _generate_dockerignore(root=root)
     if len(conf.get("install_requires", [])) > 0:
         _generate_requirements_txt(root, conf=conf)
-
+    _generate_gitattributes(root=root)
+    
     summary = "\n".join(
         [
             f"[bold]Python project '{project}' is ready.[/bold]",

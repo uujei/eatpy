@@ -88,6 +88,7 @@ __pypackages__/
 
 # Environments
 .env
+.env.*
 .venv
 env/
 venv/
