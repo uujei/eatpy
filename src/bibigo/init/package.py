@@ -31,7 +31,7 @@ def init_package(root):
         {"type": "input", "name": "long_description", "default": "file: README.md", "message": "Long Description"},
         {"type": "input", "name": "keywords", "message": "Keywords"},
         {"type": "input", "name": "license", "default": "MIT License", "message": "License"},
-        {"type": "input", "name": "python_requires", "default": ">= 3.8", "message": "Python Requires"},
+        {"type": "input", "name": "python_requires", "default": ">= 3.9", "message": "Python Requires"},
         {
             "type": "input",
             "name": "install_requires",
@@ -74,6 +74,13 @@ def init_package(root):
     write(
         dst_fp=fp / SETUP_CFG_FILE,
         content=read(SETUP_CFG_FILE).format(**conf),
+    )
+
+    # Dockerfile
+    DOCKERFILE_FILE = "Dockerfile"
+    write(
+        dst_fp=fp / DOCKERFILE_FILE,
+        content=read(DOCKERFILE_FILE),
     )
 
     # make src directory

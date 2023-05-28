@@ -5,6 +5,7 @@ import pkgutil
 
 STATIC_DIR = "static"
 
+
 # ensure path
 def ensure_path(fp: Union[str, Path]):
     return Path(fp)
