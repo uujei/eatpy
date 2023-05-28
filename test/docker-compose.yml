@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  test:
+    image: hello-world:latest
+    command: /hello
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == worker
+      update_config:
+        order: stop-first
+        parallelism: 1
+        failure_action: rollback
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        # http routers -> https
+        - "traefik.http.routers.web-test.entrypoints=web"
+        - "traefik.http.routers.web-test.rule=Host(`test.example.com`)"
+        - "traefik.http.routers.web-test.middlewares=http-redirect"
+        # https routers -> service
+        - "traefik.http.routers.websecure-test.entrypoints=websecure"
+        - "traefik.http.routers.websecure-test.rule=Host(`test.example.com`)"
+        - "traefik.http.routers.websecure-test.tls=true"
+        - "traefik.http.routers.websecure-test.tls.certresolver=lego"
+        - "traefik.http.routers.websecure-test.service=test"
+        # service
+        - "traefik.http.services.test.loadbalancer.server.port=3000"
+    networks:
+      - traefik
+      
+networks:
+  traefik:
+    external: true

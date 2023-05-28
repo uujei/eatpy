@@ -35,6 +35,13 @@ def package(root):
 
     init_settings(root)
     init_package(root)
+    
+@init.command()
+@click.argument("root")
+def docker_compose(root):
+    from .init.docker_compose import init_stack
+    
+    init_stack(root)
 
 
 ################

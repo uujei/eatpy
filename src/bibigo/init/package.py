@@ -44,7 +44,7 @@ def init_package(root):
             "default": private_pypi,
             "message": "Your Private PyPI",
         },
-        {"type": "confirm", "name": "confirm", "message": "Confirm Initializer"},
+        {"type": "confirm", "name": "confirm", "message": "Confirm"},
     ]
 
     # user input
