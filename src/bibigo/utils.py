@@ -3,6 +3,7 @@ from typing import Union
 from pathlib import Path
 import pkgutil
 
+STATIC_DIR = "static"
 
 # ensure path
 def ensure_path(fp: Union[str, Path]):
@@ -11,7 +12,7 @@ def ensure_path(fp: Union[str, Path]):
 
 # read file
 def read(fn: Path, version: str = "default"):
-    fp = Path("files") / f"{fn}.{version}"
+    fp = Path(STATIC_DIR) / f"{fn}.{version}"
     content = pkgutil.get_data(__name__, fp.as_posix()).decode()
     return content
 

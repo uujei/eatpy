@@ -4,7 +4,7 @@ from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 
-from ..utils import read, write
+from ..utils import read, write, STATIC_DIR
 
 console = Console(width=88)
 
@@ -75,6 +75,17 @@ def init_package(root):
         dst_fp=fp / SETUP_CFG_FILE,
         content=read(SETUP_CFG_FILE).format(**conf),
     )
+
+    # make src directory
+    (fp / "src").mkdir(exist_ok=True)
+    (fp / "src" / conf["project"]).mkdir(exist_ok=True)
+    _init = fp / "src" / conf["project"] / "__init__.py"
+    if not _init.exists():
+        _init.touch()
+    (fp / "src" / conf["project"] / STATIC_DIR).mkdir(exist_ok=True)
+    _init = fp / "src" / conf["project"] / STATIC_DIR / "__init__.py"
+    if not _init.exists():
+        _init.touch()
 
     # [LOGGING]
     summary = "\n".join(
