@@ -13,7 +13,7 @@ console = Console(width=88)
 # init package
 ################################################################
 def init_package(root):
-    from PyInquirer import prompt
+    from InquirerPy import prompt
 
     # get project name from input
     fp = Path(root)
