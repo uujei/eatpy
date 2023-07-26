@@ -85,12 +85,12 @@ def init_package(root):
 
     # make src directory
     (fp / "src").mkdir(exist_ok=True)
-    (fp / "src" / conf["project"]).mkdir(exist_ok=True)
-    _init = fp / "src" / conf["project"] / "__init__.py"
+    (fp / "src" / conf["project"].replace("-", "_")).mkdir(exist_ok=True)
+    _init = fp / "src" / conf["project"].replace("-", "_") / "__init__.py"
     if not _init.exists():
         _init.touch()
-    (fp / "src" / conf["project"] / STATIC_DIR).mkdir(exist_ok=True)
-    _init = fp / "src" / conf["project"] / STATIC_DIR / "__init__.py"
+    (fp / "src" / conf["project"].replace("-", "_") / STATIC_DIR).mkdir(exist_ok=True)
+    _init = fp / "src" / conf["project"].replace("-", "_") / STATIC_DIR / "__init__.py"
     if not _init.exists():
         _init.touch()
 
