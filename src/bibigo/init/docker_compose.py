@@ -4,6 +4,7 @@ from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 
+from ..exceptions import CancelInit
 from ..utils import read, write
 
 console = Console(width=88)
@@ -59,8 +60,7 @@ def init_stack(root):
     conf = prompt(deploy_conf)
     confirm = conf.pop("confirm")
     if not confirm:
-        print("[EXIT] Nothing Happened!")
-        return
+        raise CancelInit
 
     # [WRITE FILES]
     DOCKER_COMPOSE_FILE = "docker-compose.yml"

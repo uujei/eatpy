@@ -2,6 +2,8 @@ from __future__ import print_function, unicode_literals
 
 import click
 
+from .exceptions import CancelInit
+
 
 ################################################################
 # CLIs
@@ -24,7 +26,11 @@ def init():
 def settings(root):
     from .init.settings import init_settings
 
-    init_settings(root, verbose=True)
+    try:
+        init_settings(root, verbose=True)
+    except CancelInit as ex:
+        print("[EXIT] Nothing Happened!")
+        return
 
 
 @init.command()
@@ -33,8 +39,12 @@ def package(root):
     from .init.package import init_package
     from .init.settings import init_settings
 
-    init_settings(root)
-    init_package(root)
+    try:
+        init_package(root)
+        init_settings(root)
+    except CancelInit as ex:
+        print("[EXIT] Nothing Happened!")
+        return
 
 
 @init.command()
@@ -42,7 +52,11 @@ def package(root):
 def docker_compose(root):
     from .init.docker_compose import init_stack
 
-    init_stack(root)
+    try:
+        init_stack(root)
+    except CancelInit as ex:
+        print("[EXIT] Nothing Happened!")
+        return
 
 
 ################
